@@ -1,0 +1,38 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo --- LOG IN TO AMAZON ECR ---
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws s3 cp $CERT_S3_URI /tmp
+      - aws s3 cp $DOT_ENV_S3_URI /tmp
+  build:
+    commands:
+      - echo BUILD STARTED ON `date`
+
+      - echo --- CLONE THE LMS-LRS DEPLOYMENT REPO ---
+      - git clone --depth 1 --branch main https://github.com/hiram-labs/lms-lrs-aws-deploy.git
+      - cd lms-lrs-aws-deploy
+
+      - echo --- COPY CERTS FROM S3 ---
+      - cp /tmp/global-bundle.pem ./certs
+      - rm ./certs/.gitkeep
+
+      - echo --- COPY ENV FROM S3 ---
+      - cp /tmp/.env.* ./.env
+
+      - echo --- BUILD THE DOCKER IMAGES ---
+      - docker build --progress=plain --target CLI -t $IMAGE_REPO_NAME:cli-latest .
+      - docker build --progress=plain --target WEB -t $IMAGE_REPO_NAME:web-latest .
+
+      - echo --- TAG THE DOCKER IMAGES ---
+      - docker tag $IMAGE_REPO_NAME:cli-latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:cli-latest
+      - docker tag $IMAGE_REPO_NAME:web-latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:web-latest
+  post_build:
+    commands:
+      - echo BUILD COMPLETED ON `date`
+
+      - echo --- PUSH THE DOCKER IMAGES ---
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:cli-latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:web-latest
