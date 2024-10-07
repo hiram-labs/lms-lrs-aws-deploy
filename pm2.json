@@ -1,0 +1,96 @@
+{
+  "apps": [
+    {
+      "name": "lms-directus",
+      "script": "/app/lms-directus/dist/cli.js",
+      "args": ["start"],
+      "cwd": "/app/lms-directus/dist",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lms-studio",
+      "script": "/app/lms-studio/dist/server/entry.mjs",
+      "cwd": ".",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lrs-api",
+      "script": "/app/lrs-core/api/dist/server",
+      "cwd": ".",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lrs-ui",
+      "script": "/app/lrs-core/ui/dist/server",
+      "cwd": ".",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lrs-worker",
+      "script": "/app/lrs-core/worker/dist/server",
+      "cwd": ".",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lrs-scheduler",
+      "script": "/app/lrs-core/cli/dist/scheduler",
+      "cwd": ".",
+      "instances": 1,
+      "exec_mode": "fork",
+      "detached": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    },
+    {
+      "name": "lrs-xapi",
+      "script": "/app/lrs-xapi-service/xapi/dist/server.js",
+      "cwd": ".",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=512 --max-semi-space-size=16",
+      "autorestart": true,
+      "restart_delay": 1000,
+      "max_memory_restart": "500M"
+    }
+  ]
+}
