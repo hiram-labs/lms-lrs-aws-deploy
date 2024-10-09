@@ -28,7 +28,7 @@ COPY nginx.conf /tmp/nginx.conf.template
 
 WORKDIR /opt
 
-RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-directus.git \
+RUN git clone --depth 1 --branch xrtemis https://github.com/hiram-labs/lms-directus.git \
     && cd lms-directus \
     && cp /tmp/.env .\
     && corepack enable \
@@ -47,7 +47,7 @@ RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-directus
     ' \
     && cd /opt
 
-RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-studio.git \
+RUN git clone --depth 1 --branch xrtemis https://github.com/hiram-labs/lms-studio.git \
     && cd lms-studio \
     && cp /tmp/.env .\
     && npm ci \
@@ -55,7 +55,7 @@ RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-studio.g
     && rm -rf ./node_modules/.cache \
     && cd /opt
 
-RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lrs-core.git \
+RUN git clone --depth 1 --branch xrtemis https://github.com/hiram-labs/lrs-core.git \
     && cd lrs-core \
     && cp /tmp/.env .\
     && npm ci \
@@ -63,7 +63,7 @@ RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lrs-core.git
     && rm -rf ./node_modules/.cache \
     && cd /opt
 
-RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lrs-xapi-service.git \
+RUN git clone --depth 1 --branch xrtemis https://github.com/hiram-labs/lrs-xapi-service.git \
     && cd lrs-xapi-service \
     && cp /tmp/.env .\
     && npm ci \
