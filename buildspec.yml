@@ -13,7 +13,7 @@ phases:
       - echo BUILD STARTED ON `date`
 
       - echo --- CLONE THE LMS-LRS DEPLOYMENT REPO ---
-      - git clone --depth 1 --branch main https://github.com/hiram-labs/lms-lrs-aws-deploy.git
+      - git clone --depth 1 --branch xrtemis https://github.com/hiram-labs/lms-lrs-aws-deploy.git
       - cd lms-lrs-aws-deploy
 
       - echo --- COPY ASSETLINKS FROM S3 ---
