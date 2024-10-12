@@ -6,7 +6,8 @@ services:
     container_name: maildev
     restart: always
     ports:
-      - 7000:1080 # ui port
+      - 1080:1080 # ui port
+      - 1025:1025
 
   minio:
     image: minio/minio
@@ -17,7 +18,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
     ports:
-      - 7001:9001 # ui port
+      - 9001:9001 # ui port
+      - 9000:9000
 
   postgres:
     image: postgres:13
@@ -29,6 +31,8 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   mongo:
     image: mongodb/mongodb-community-server:latest
@@ -36,6 +40,8 @@ services:
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - 27017:27017
 
   redis:
     image: redis:latest
@@ -43,13 +49,15 @@ services:
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - 6379:6379
 
   redisinsight:
     image: redis/redisinsight
     container_name: redisinsight
     restart: always
     ports:
-      - 7002:5540
+      - 5540:5540 # ui port
 
 volumes:
   db_data:
