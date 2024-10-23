@@ -110,6 +110,8 @@ WORKDIR /app
 COPY --from=BUILDER /opt/lrs-core/lib ./lib
 COPY --from=BUILDER /tmp/nginx.conf /etc/nginx/conf.d/
 COPY --from=BUILDER /tmp/.env ./
+
+COPY static/* /var/www/html/
 COPY certs/* /etc/ssl/certs/
 COPY pm2.json ctl.sh ./
 
@@ -133,7 +135,6 @@ RUN ln -s /usr/lib/node_modules /usr/bin/node_modules \
     && ln -s /app/.env /app/lrs-core/.env \
     && ln -s /app/.env /app/lrs-xapi-service/.env \
     && rm /etc/nginx/sites-enabled/default \
-    && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     && mkdir -p /app/storage/tmp
 
 EXPOSE 80
