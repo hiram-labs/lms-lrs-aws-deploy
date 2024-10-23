@@ -1,4 +1,7 @@
 .DS_STORE
 .env
+
+static/.well-known
+
 .local/*
 !.local/docker-compose.yml

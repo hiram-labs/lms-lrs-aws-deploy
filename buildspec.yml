@@ -7,6 +7,7 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - aws s3 cp $CERT_S3_URI /tmp
       - aws s3 cp $DOT_ENV_S3_URI /tmp
+      - aws s3 cp $ASSETLINKS_URI /tmp
   build:
     commands:
       - echo BUILD STARTED ON `date`
@@ -14,6 +15,11 @@ phases:
       - echo --- CLONE THE LMS-LRS DEPLOYMENT REPO ---
       - git clone --depth 1 --branch main https://github.com/hiram-labs/lms-lrs-aws-deploy.git
       - cd lms-lrs-aws-deploy
+
+      - echo --- COPY ASSETLINKS FROM S3 ---
+      - mkdir ./static/.well-known
+      - cp /tmp/assetlinks.json ./static/.well-known
+      - rm ./static/.gitkeep
 
       - echo --- COPY CERTS FROM S3 ---
       - cp /tmp/global-bundle.pem ./certs
