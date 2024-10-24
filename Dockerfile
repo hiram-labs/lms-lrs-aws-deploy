@@ -111,8 +111,8 @@ COPY --from=BUILDER /opt/lrs-core/lib ./lib
 COPY --from=BUILDER /tmp/nginx.conf /etc/nginx/conf.d/
 COPY --from=BUILDER /tmp/.env ./
 
-COPY static/* /var/www/html/
-COPY certs/* /etc/ssl/certs/
+COPY static/ /var/www/html/
+COPY certs/ /etc/ssl/certs/
 COPY pm2.json ctl.sh ./
 
 RUN ln -s /usr/lib/node_modules /usr/bin/node_modules \
