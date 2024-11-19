@@ -1,5 +1,5 @@
 # -- Stage 1: Build the application
-FROM debian:12 as BUILDER
+FROM public.ecr.aws/debian/debian:12 as BUILDER
 
 # assists ./nginx.conf file envsubst
 ENV DOLLAR=$
@@ -76,7 +76,7 @@ RUN set -a && . /tmp/.env && set +a \
 
 
 # -- Stage 2: Create web services image
-FROM debian:12-slim as WEB
+FROM public.ecr.aws/debian/debian:12-slim as WEB
 
 ENV HOST=0.0.0.0
 ENV PATH=/usr/lib/node_modules/npm/bin:$PATH
