@@ -36,8 +36,8 @@ RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-directus
     && pnpm fetch \
     && pnpm install --recursive --offline --frozen-lockfile \
     && npm_config_workspace_concurrency=1 pnpm run build \
-    && rm -rf ./node_modules/.cache \
     && pnpm --filter directus deploy --prod dist \
+    && rm -rf ./node_modules/.cache \
     && cd dist \
     # Regenerate package.json file with essential fields only (see https://github.com/directus/directus/issues/20338)
     && node -e ' \
@@ -87,6 +87,8 @@ COPY --from=builder /usr/lib/node_modules /usr/lib/node_modules
 
 WORKDIR /app/lms-directus
 COPY --from=BUILDER /opt/lms-directus/dist ./dist
+COPY --from=BUILDER /opt/lms-directus/directus-extensions/lms/dist ./dist/extensions/lms/dist
+COPY --from=BUILDER /opt/lms-directus/directus-extensions/lms/package.json ./dist/extensions/lms/
 
 WORKDIR /app/lms-studio
 COPY --from=BUILDER /opt/lms-studio/package.json /opt/lms-studio/package-lock.json ./
