@@ -32,7 +32,8 @@ RUN git clone --depth 1 --branch main https://github.com/hiram-labs/lms-directus
     && cd lms-directus \
     && cp /tmp/.env .\
     && corepack enable \
-    && corepack prepare \
+    # The was a corepack https://github.com/nodejs/corepack/issues/612
+    && corepack prepare pnpm@10.0.0 --activate \
     && pnpm fetch \
     && pnpm install --recursive --offline --frozen-lockfile \
     && npm_config_workspace_concurrency=1 pnpm run build \
