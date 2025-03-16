@@ -1,10 +1,11 @@
 # -- Stage 1: Build the application
 FROM public.ecr.aws/debian/debian:12 as BUILDER
+ARG IMAGE_VERSION
 
+ENV DEBIAN_FRONTEND=noninteractive
 # assists ./nginx.conf file envsubst
 ENV DOLLAR=$
-ENV DEBIAN_FRONTEND=noninteractive
-
+ENV IMAGE_VERSION=${IMAGE_VERSION}
 # node >16 dropped md4 support this bypasses it (https://github.com/webpack/webpack/issues/14532)
 ENV NODE_OPTIONS="--openssl-legacy-provider --max-old-space-size=8192"
 

@@ -61,7 +61,6 @@ jobs:
           if [[ ${new_parts[0]} -gt ${latest_parts[0]} || \
                 (${new_parts[0]} -eq ${latest_parts[0]} && ${new_parts[1]} -gt ${latest_parts[1]}) || \
                 (${new_parts[0]} -eq ${latest_parts[0]} && ${new_parts[1]} -eq ${latest_parts[1]} && ${new_parts[2]} -gt ${latest_parts[2]}) ]]; then
-            
             echo "New version ($NEW_VERSION) is valid."
             echo "is_valid=true" >> $GITHUB_OUTPUT
             echo "new_version=$NEW_VERSION" >> $GITHUB_STEP_SUMMARY
@@ -119,12 +118,14 @@ jobs:
 
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+          docker login --username AWS --password-stdin \
+          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
       - name: Build Docker Images
         run: |
-          docker build --progress=plain --target CLI -t cli .
-          docker build --progress=plain --target WEB -t web .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target CLI -t cli .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target WEB -t web .
 
       - name: Tag Docker Images
         run: |
