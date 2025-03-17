@@ -172,8 +172,11 @@ server {
     server_name staging.*;
 
     location / {
+        set \$new_host \$host;
+        if (\$host ~* ^staging\.(.*)) { set \$new_host $1; }
+
         proxy_pass http://\${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
-        proxy_set_header Host \$host;
+        proxy_set_header Host \$new_host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
