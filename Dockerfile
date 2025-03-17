@@ -173,7 +173,7 @@ server {
 
     location / {
         set \$new_host \$host;
-        if (\$host ~* ^staging\.(.*)) { set \$new_host $1; }
+        if (\$host ~* ^staging\\.(.*)) { set \$new_host \$1; }
 
         proxy_pass http://\${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
         proxy_set_header Host \$new_host;
