@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.3-labs
+
 # -- Stage 1: Build the application
 FROM public.ecr.aws/debian/debian:12 as BUILDER
 ARG IMAGE_VERSION
@@ -153,3 +155,41 @@ RUN rm -rf /app/lms-studio /app/lrs-xapi-service /app/lrs-core/worker /app/lrs-c
 
 ENTRYPOINT ["sh", "-c"]
 CMD [ "ctl", "help" ]
+
+
+
+# -- Stage 4: Create proxy service image
+FROM public.ecr.aws/nginx/nginx:1.27-alpine3.21-slim as PROXY
+
+ENV STAGING_SERVICE_NAME=public_xrtemis_staging
+ENV PROD_SERVICE_NAME=public_xrtemis_production
+ENV ECS_DNS_NAMESPACE=tf-xrtemis.local
+
+COPY <<EOF /etc/nginx/templates/default.conf.template
+server {
+    listen      80;
+    listen      [::]:80;
+    server_name staging.*;
+
+    location / {
+        proxy_pass http://\${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+server {
+    listen      80;
+    listen      [::]:80;
+    server_name _;
+
+    location / {
+        proxy_pass http://\${PROD_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
