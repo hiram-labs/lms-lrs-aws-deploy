@@ -191,4 +191,5 @@ backend production_backend
     server production \${PROD_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80 check
 EOF
 
+USER root
 EXPOSE 80
