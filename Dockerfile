@@ -159,40 +159,36 @@ CMD [ "ctl", "help" ]
 
 
 # -- Stage 4: Create proxy service image
-FROM public.ecr.aws/nginx/nginx:1.27-alpine3.21-slim as PROXY
+FROM public.ecr.aws/docker/library/haproxy:2.8-alpine as PROXY
 
 ENV STAGING_SERVICE_NAME=public_xrtemis_staging
 ENV PROD_SERVICE_NAME=public_xrtemis_production
 ENV ECS_DNS_NAMESPACE=tf-xrtemis.local
 
-COPY <<EOF /etc/nginx/templates/default.conf.template
-server {
-    listen      80;
-    listen      [::]:80;
-    server_name staging.*;
+COPY <<EOF /usr/local/etc/haproxy/haproxy.cfg
+global
+    # log stdout format raw local0
+    maxconn 4096
 
-    location / {
-        set \$new_host \$host;
-        if (\$host ~* ^staging\\.(.*)) { set \$new_host \$1; }
+defaults
+    log global
+    mode http
+    timeout connect 5s
+    timeout client 50s
+    timeout server 50s
 
-        proxy_pass http://\${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
-        proxy_set_header Host \$new_host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-    }
-}
-server {
-    listen      80;
-    listen      [::]:80;
-    server_name _;
+frontend http_front
+    bind *:80
+    acl is_staging hdr_beg(host) -i staging.
+    use_backend staging_backend if is_staging
+    default_backend production_backend
 
-    location / {
-        proxy_pass http://\${PROD_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-    }
-}
+backend staging_backend
+    http-request set-header Host %[req.hdr(host),regsub(^staging\.,,)]
+    server staging \${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80 check
+
+backend production_backend
+    server production \${PROD_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80 check
 EOF
+
+EXPOSE 80
