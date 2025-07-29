@@ -179,12 +179,11 @@ defaults
 
 frontend http_front
     bind *:80
-    acl is_staging hdr_beg(host) -i staging.
+    acl is_staging hdr_sub(host) .staging.
     use_backend staging_backend if is_staging
     default_backend production_backend
 
 backend staging_backend
-    http-request set-header Host %[req.hdr(host),regsub(^staging\.,,)]
     server staging \${STAGING_SERVICE_NAME}.\${ECS_DNS_NAMESPACE}:80 check
 
 backend production_backend
