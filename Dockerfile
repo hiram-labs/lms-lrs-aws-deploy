@@ -179,7 +179,7 @@ defaults
 
 frontend http_front
     bind *:80
-    acl is_staging hdr_sub(host) .staging.
+    acl is_staging hdr_sub(host) staging.
     use_backend staging_backend if is_staging
     default_backend production_backend
 
