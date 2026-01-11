@@ -160,10 +160,11 @@ CMD [ "ctl", "help" ]
 
 # -- Stage 4: Create proxy service image
 FROM public.ecr.aws/docker/library/haproxy:2.8-alpine as PROXY
+ARG INFRA_PROJECT_NAME
 
-ENV STAGING_SERVICE_NAME=public_xrtemis_staging
-ENV PROD_SERVICE_NAME=public_xrtemis_production
-ENV ECS_DNS_NAMESPACE=tf-xrtemis.local
+ENV STAGING_SERVICE_NAME=public_${INFRA_PROJECT_NAME}_staging
+ENV PROD_SERVICE_NAME=public_${INFRA_PROJECT_NAME}_production
+ENV ECS_DNS_NAMESPACE=${INFRA_PROJECT_NAME}.local
 
 COPY <<EOF /usr/local/etc/haproxy/haproxy.cfg
 global

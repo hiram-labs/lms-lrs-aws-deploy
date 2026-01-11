@@ -90,6 +90,7 @@ jobs:
       CERT_S3_URI: ${{ vars.CERT_S3_URI }}
       DOT_ENV_S3_URI: ${{ vars.DOT_ENV_STAGING_S3_URI }}
       ASSETLINKS_URI: ${{ vars.ASSETLINKS_URI }}
+      INFRA_PROJECT_NAME: ${{ vars.INFRA_PROJECT_NAME }}
       NEW_VERSION: ${{ github.event.inputs.version }}
 
     steps:
@@ -132,9 +133,9 @@ jobs:
 
       - name: Build Docker Images
         run: |
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target CLI -t cli .
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target WEB -t web .
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target PROXY -t proxy .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target CLI -t cli .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target WEB -t web .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target PROXY -t proxy .
 
       - name: Tag Docker Images
         run: |
@@ -161,6 +162,7 @@ jobs:
       CERT_S3_URI: ${{ vars.CERT_S3_URI }}
       DOT_ENV_S3_URI: ${{ vars.DOT_ENV_PRODUCTION_S3_URI }}
       ASSETLINKS_URI: ${{ vars.ASSETLINKS_URI }}
+      INFRA_PROJECT_NAME: ${{ vars.INFRA_PROJECT_NAME }}
       NEW_VERSION: ${{ github.event.inputs.version }}
 
     steps:
@@ -203,9 +205,9 @@ jobs:
 
       - name: Build Docker Images
         run: |
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target CLI -t cli .
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target WEB -t web .
-          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --target PROXY -t proxy .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target CLI -t cli .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target WEB -t web .
+          docker build --progress=plain --build-arg IMAGE_VERSION=$NEW_VERSION --build-arg INFRA_PROJECT_NAME=$INFRA_PROJECT_NAME --target PROXY -t proxy .
 
       - name: Tag Docker Images
         run: |
